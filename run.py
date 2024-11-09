@@ -18,7 +18,10 @@ def agent_portrayal(agent):
 
     return portrayal
 
-grid = mesa.visualization.CanvasGrid(agent_portrayal, 10, 10, 500, 500)
+width = 10
+height = 10
+
+grid = mesa.visualization.CanvasGrid(agent_portrayal, width, height, 500, 500)
 
 steps_chart = ChartModule( [{"Label": "Steps", "Color": "Black"}],
                            data_collector_name='datacollector' )
@@ -27,8 +30,8 @@ overlap_chart = ChartModule( [{"Label": "Overlaps", "Color": "Red"}],
                              data_collector_name='datacollector' )
 
 model_params = { "N": NumberInput("Number of Roombas", value=10),
-                 "width": Slider("Grid Width", 10, 5, 999, 1),
-                 "height": Slider("Grid Height", 10, 5, 999, 1),
+                 "width": width,
+                 "height": height,
                  "sucio": Slider("Percentage of Dirty Spots", 10, 0, 100, 1),
                  "t_max": Slider("Max Steps", 100, 1, 999, 1) }
 
