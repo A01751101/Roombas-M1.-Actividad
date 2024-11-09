@@ -29,6 +29,9 @@ steps_chart = ChartModule( [{"Label": "Steps", "Color": "Black"}],
 overlap_chart = ChartModule( [{"Label": "Overlaps", "Color": "Red"}],
                              data_collector_name='datacollector' )
 
+manchas_chart = ChartModule( [{"Label": "ManchasLimpias", "Color": "Green"}],
+                             data_collector_name='datacollector' )
+
 model_params = { "N": NumberInput("Number of Roombas", value=10),
                  "width": width,
                  "height": height,
@@ -37,7 +40,7 @@ model_params = { "N": NumberInput("Number of Roombas", value=10),
 
 server = ModularServer(
     RoombaModel,
-    [grid, steps_chart, overlap_chart],
+    [grid, steps_chart, overlap_chart, manchas_chart],
     "Roomba Model",
     model_params )
 server.port = 8521 # The default

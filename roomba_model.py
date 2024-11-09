@@ -1,15 +1,25 @@
 import mesa
 from mesa import DataCollector
 
+
 def getSteps(model):
     agentSteps = [agent.stepsGiven for agent in model.schedule.agents if isinstance(agent, RoombaAgent)]
     B = sum(agentSteps)
     return (B)
 
+
 def getOverlaps(model):
     agentOverlaps = [agent.overlapTimes for agent in model.schedule.agents if isinstance(agent, RoombaAgent)]
     B = sum(agentOverlaps)
     return (B/len(agentOverlaps))
+
+
+def porcentajeManchasLimpias(model):
+    agentManchas = [agent.is_clean for agent in model.schedule.agents if isinstance(agent, ManchaAgent)]
+    total_manchas = len(agentManchas)
+    manchas_limpias = sum(agentManchas)
+    return (manchas_limpias / total_manchas) * 100 if total_manchas > 0 else 0
+
 
 class RoombaAgent(mesa.Agent):
     def __init__(self, name, model):
@@ -89,7 +99,7 @@ class RoombaModel(mesa.Model):
         self.running = True
 
         self.datacollector = mesa.DataCollector(
-            model_reporters={"Steps": getSteps, "Overlaps": getOverlaps}
+            model_reporters={"Steps": getSteps, "Overlaps": getOverlaps, "ManchasLimpias": porcentajeManchasLimpias}
         )
 
         # Create agents
