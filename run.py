@@ -1,5 +1,6 @@
 from mesa_viz_tornado.ModularVisualization import ModularServer
 from mesa_viz_tornado.UserParam import NumberInput, Slider
+from mesa_viz_tornado.modules import ChartModule
 
 from roomba_model import mesa, RoombaModel, RoombaAgent, ManchaAgent
 
@@ -19,6 +20,12 @@ def agent_portrayal(agent):
 
 grid = mesa.visualization.CanvasGrid(agent_portrayal, 10, 10, 500, 500)
 
+steps_chart = ChartModule( [{"Label": "Steps", "Color": "Black"}],
+                           data_collector_name='datacollector' )
+
+overlap_chart = ChartModule( [{"Label": "Overlaps", "Color": "Red"}],
+                             data_collector_name='datacollector' )
+
 model_params = { "N": NumberInput("Number of Roombas", value=10),
                  "width": Slider("Grid Width", 10, 5, 999, 1),
                  "height": Slider("Grid Height", 10, 5, 999, 1),
@@ -27,7 +34,7 @@ model_params = { "N": NumberInput("Number of Roombas", value=10),
 
 server = ModularServer(
     RoombaModel,
-    [grid],
+    [grid, steps_chart, overlap_chart],
     "Roomba Model",
     model_params )
 server.port = 8521 # The default

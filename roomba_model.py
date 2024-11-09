@@ -1,4 +1,15 @@
 import mesa
+from mesa import DataCollector
+
+def getSteps(model):
+    agentSteps = [agent.stepsGiven for agent in model.schedule.agents if isinstance(agent, RoombaAgent)]
+    B = sum(agentSteps)
+    return (B/len(agentSteps))
+
+def getOverlaps(model):
+    agentOverlaps = [agent.overlapTimes for agent in model.schedule.agents if isinstance(agent, RoombaAgent)]
+    B = sum(agentOverlaps)
+    return (B/len(agentOverlaps))
 
 class RoombaAgent(mesa.Agent):
     def __init__(self, name, model):
@@ -34,11 +45,24 @@ class RoombaAgent(mesa.Agent):
                     return False
         return True
 
+    def checkOverlap(self):
+        cellmates = self.model.grid.get_cell_list_contents([self.pos])
+        for agent in cellmates:
+            if isinstance(agent, RoombaAgent) and agent != self:
+                    return True
+        return False
+
     def step(self):
         if not self.checkClean():
             self.clean()
         else:
             self.move()
+        self.stepsGiven += 1
+        print(f"steps {self.stepsGiven}")
+
+        if self.checkOverlap():
+            self.overlapTimes += 1
+            print(f"overlap {self.overlapTimes}" )
 
 class ManchaAgent(mesa.Agent):
     def __init__(self, name, model):
@@ -63,6 +87,11 @@ class RoombaModel(mesa.Model):
         # Create scheduler and assign it to the model
         self.schedule = mesa.time.RandomActivation(self)
         self.running = True
+
+        self.datacollector = mesa.DataCollector(
+            model_reporters={"Steps": getSteps, "Overlaps": getOverlaps}
+        )
+
         # Create agents
         for i in range(self.num_agents):
             a = RoombaAgent(i, self)
@@ -91,7 +120,7 @@ class RoombaModel(mesa.Model):
         return True
 
     def step(self):
-        print(self.schedule.steps)
+        self.datacollector.collect(self)
         if self.schedule.steps >= self.t_max-1 or self.checkManchas():
             self.running = False
         else:
