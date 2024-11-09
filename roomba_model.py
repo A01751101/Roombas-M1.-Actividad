@@ -4,7 +4,7 @@ from mesa import DataCollector
 def getSteps(model):
     agentSteps = [agent.stepsGiven for agent in model.schedule.agents if isinstance(agent, RoombaAgent)]
     B = sum(agentSteps)
-    return (B/len(agentSteps))
+    return (B)
 
 def getOverlaps(model):
     agentOverlaps = [agent.overlapTimes for agent in model.schedule.agents if isinstance(agent, RoombaAgent)]
